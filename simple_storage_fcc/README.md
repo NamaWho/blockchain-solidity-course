@@ -1,6 +1,6 @@
 # Personal Notes
 
-## Lesson 2 - Welcome to Remix (Simple Storage)
+## Simple Storage
 
 ### View and Pure Functions
 A function can be either *pure* or *view*. Both of them disallow modification of state. When called, **they don't spend gas**.
