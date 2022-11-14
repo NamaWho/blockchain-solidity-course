@@ -53,16 +53,15 @@ pragma solidity ^0.8.0;
 //     );
 // }
 
-// or
-
-// Importing the same interface from NPM (as a package)
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "./PriceConverter.sol";
 
 // Allows addresses to raise funds for themselves
 // Get funds from users
 // Withdraw funds
 // Set a minimum funding value
 contract FundMe {
+
+    using PriceConverter for uint256;
 
     // uint256 public number;
     uint256 public minimumUSD = 50;
@@ -83,9 +82,10 @@ contract FundMe {
         // - v, r, s > components of tx signature
         // In order to receive ETH, it has to be marked as 'payable'
         // To access to the ETH received, use msg.value
-        
-        // number = 5
-        require(getConversionRate(msg.value) >= minimumUSD, "Did not receive enough ETH"); // 1e18 = 1wei * 10^18 = 1 ETH
+      
+        // require(getConversionRate(msg.value) >= minimumUSD, "Did not receive enough ETH"); // 1e18 = 1wei * 10^18 = 1 ETH
+        // In msg.value.getConversionRate(), msg.value is the first implicit parameter
+        require(msg.value.getConversionRate() >= minimumUSD, "Did not receive enough ETH"); // 1e18 = 1wei * 10^18 = 1 ETH
 
         // Revert a tx consists in undoing any action performed before, and send remaining gas back to the msg.sender
         // E.G. 
@@ -102,37 +102,4 @@ contract FundMe {
         addressToAmountFunded[msg.sender] = msg.value;
 
     }   
-
-    function getPrice() public view returns (uint256) {
-        // Need to interact with Chainlink Data Feed
-        // ABI
-        // Address (Goerly network) - https://docs.chain.link/docs/data-feeds/price-feeds/addresses/#Goerli%20Testnet [0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e]
-
-        // This AggregatorV3Interface lets us to link the needed data feed with an existent Chainlink interface in order to get data in a standard way.
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
-
-        (, int256 price,,,) = priceFeed.latestRoundData();
-
-        // Remembering that an ETH has 18 decimals 
-        // 1.0000000000000000000 [18 zeros]
-        // Instead ETH in terms of USD
-        // 3000.00000000 [8 decimals]
-        return uint256(price * 1e10);
-    }
-
-    function getConversionRate(uint256 ethAmount) public view returns (uint256) {
-        uint256 ethPrice = getPrice();
-
-        // ALWAYS MULTIPLY BEFORE DIVIDING
-        // Example
-        // ethPrice = 3000_0000000000000000000  ETH/USD price [18 decimals]
-        // ethAmount = 1_000000000000000000     ETH [18 decimals]
-        // ethPrice * ethAmount = 3000_00000000000000000000000000000000000000 [36 decimals]
-        // ethAmountInUsd = 3000_0000000000000000000 [18 decimals]
-
-        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
-
-        return ethAmountInUsd;
-    }
-
 }
