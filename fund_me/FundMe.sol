@@ -82,7 +82,7 @@ contract FundMe {
         // To access to the ETH received, use msg.value
         
         // number = 5
-        require(msg.value > 1e18, "Did not receive enough ETH"); // 1e18 = 1wei * 10^18 = 1 ETH
+        require(getConversionRate(msg.value) > minimumUSD, "Did not receive enough ETH"); // 1e18 = 1wei * 10^18 = 1 ETH
 
         // Revert a tx consists in undoing any action performed before, and send remaining gas back to the msg.sender
         // E.G. 
@@ -95,18 +95,36 @@ contract FundMe {
         // In this case we want to get the real-time change for ETH/USD pair
     }   
 
-    function getPrice() public  {
+    function getPrice() public view returns (uint256) {
         // Need to interact with Chainlink Data Feed
         // ABI
         // Address (Goerly network) - https://docs.chain.link/docs/data-feeds/price-feeds/addresses/#Goerli%20Testnet [0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e]
 
         // This AggregatorV3Interface lets us to link the needed data feed with an existent Chainlink interface in order to get data in a standard way.
-        AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e).version();
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
 
+        (, int256 price,,,) = priceFeed.latestRoundData();
+
+        // Remembering that an ETH has 18 decimals 
+        // 1.0000000000000000000 [18 zeros]
+        // Instead ETH in terms of USD
+        // 3000.00000000 [8 decimals]
+        return uint256(price * 1e10);
     }
 
-    function getConversionRate() public {
+    function getConversionRate(uint256 ethAmount) public view returns (uint256) {
+        uint256 ethPrice = getPrice();
 
+        // ALWAYS MULTIPLY BEFORE DIVIDING
+        // Example
+        // ethPrice = 3000_0000000000000000000  ETH/USD price [18 decimals]
+        // ethAmount = 1_000000000000000000     ETH [18 decimals]
+        // ethPrice * ethAmount = 3000_00000000000000000000000000000000000000 [36 decimals]
+        // ethAmountInUsd = 3000_0000000000000000000 [18 decimals]
+
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
+
+        return ethAmountInUsd;
     }
 
 }
