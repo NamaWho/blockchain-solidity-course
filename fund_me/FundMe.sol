@@ -67,6 +67,9 @@ contract FundMe {
     // uint256 public number;
     uint256 public minimumUSD = 50;
 
+    address[] public funders;
+    mapping(address => uint256) public addressToAmountFunded;
+
     function fund() public payable {
         // Want to be able to set a minim funding value
         // How does the contract receive ETH?
@@ -82,7 +85,7 @@ contract FundMe {
         // To access to the ETH received, use msg.value
         
         // number = 5
-        require(getConversionRate(msg.value) > minimumUSD, "Did not receive enough ETH"); // 1e18 = 1wei * 10^18 = 1 ETH
+        require(getConversionRate(msg.value) >= minimumUSD, "Did not receive enough ETH"); // 1e18 = 1wei * 10^18 = 1 ETH
 
         // Revert a tx consists in undoing any action performed before, and send remaining gas back to the msg.sender
         // E.G. 
@@ -93,6 +96,11 @@ contract FundMe {
 
         // In order to get values outside the blockchain, we have to use offchain oracles like Chainlink
         // In this case we want to get the real-time change for ETH/USD pair
+    
+        // Record address of the sender and the amount of his funding 
+        funders.push(msg.sender);
+        addressToAmountFunded[msg.sender] = msg.value;
+
     }   
 
     function getPrice() public view returns (uint256) {
