@@ -71,27 +71,25 @@ contract FundMe {
     mapping(address => uint256) public addressToAmountFunded;
 
     modifier onlyOwner {
-        require((msg.sender == owner), "Not the Contract's owner");
+        require((msg.sender == owner), "Sender is not owner");
+        _;  // Lets continue with the normal flow of the function where the modifier is assigned to (such as withdraw())
     }
-
 
     constructor (){
         owner = msg.sender;
     }
 
-
-
     function fund() public payable {
         // Want to be able to set a minim funding value
         // How does the contract receive ETH?
         // Remember how a TX is composed:
-        // - Nonce > tx count for the account
-        // - Gas Price > price per unit of gas (in wei)
-        // - Gas Limit > 21000
-        // - To > address that the tx is sent to (in this case the contract address)
-        // - Value > amount of wei to send
-        // - Data > what to send to the To address
-        // - v, r, s > components of tx signature
+        // - Nonce      > tx count for the account
+        // - Gas Price  > price per unit of gas (in wei)
+        // - Gas Limit  > 21000
+        // - To         > address that the tx is sent to (in this case the contract address)
+        // - Value      > amount of wei to send
+        // - Data       > what to send to the To address
+        // - v, r, s    > components of tx signature
         // In order to receive ETH, it has to be marked as 'payable'
         // To access to the ETH received, use msg.value
       
@@ -114,7 +112,7 @@ contract FundMe {
         addressToAmountFunded[msg.sender] = msg.value;
     }   
 
-    function withdraw() public {        
+    function withdraw() public onlyOwner {        
         require(addressToAmountFunded[msg.sender] > 0, "Not enough funds to withdraw");
 
         // Reset amount of funded money for each funder, because owner is going to withdraw all the funds 
