@@ -66,8 +66,20 @@ contract FundMe {
     // uint256 public number;
     uint256 public minimumUSD = 50;
 
+    address public owner;
     address[] public funders;
     mapping(address => uint256) public addressToAmountFunded;
+
+    modifier onlyOwner {
+        require((msg.sender == owner), "Not the Contract's owner");
+    }
+
+
+    constructor (){
+        owner = msg.sender;
+    }
+
+
 
     function fund() public payable {
         // Want to be able to set a minim funding value
@@ -113,6 +125,43 @@ contract FundMe {
 
         // Reset funders array assigning default value 0 
         funders = new address[](0);
-        
+
+        // withdraw funds
+        // There are 3 different ways to send native blockchain currency (such ether):
+        // 1) Transfer
+        // 2) Send
+        // 3) Call
+
+        // ----- Transfer -----
+        // transfer() is expensive (2300 gas, throws error)
+        //
+        // address(this) refers to the smart contract
+        // payable() - to cast address type to a payable address type, which can receive ether
+        //      msg.sender = address
+        //      payable(msg.sender) = payable address
+        //
+        // payable(msg.sender).transfer(address(this).balance);
+        //
+        // --------------------
+
+        // ----- Send -----
+        // transfer() is expensive (2300 gas, returns bool)
+        //
+        // bool sendSuccess = payable(msg.sender).send(address(this).balance);
+        // require(sendSuccess, "Send failed");    // If send() fails, then tx would be reverted
+        //
+        // ----------------
+
+
+        // ----- Call -----
+        // call() - forwards all gas or set gas, returns bool
+        // Low-Level function used to call virtually any function in all Ethereum without having ABI 
+        // Is a real transaction
+        // Returns (boolean, bytes), but in this case we only need the first return variable
+        (bool callSuccess, bytes memory dataReturned) = payable(msg.sender).call{value: address(this).balance}("");
+        require(callSuccess, "Call failed");
+        //
+        // ----------------
+
     }
 }
