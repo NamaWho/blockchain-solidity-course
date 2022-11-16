@@ -100,6 +100,19 @@ contract FundMe {
         // Record address of the sender and the amount of his funding 
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] = msg.value;
-
     }   
+
+    function withdraw() public {        
+        require(addressToAmountFunded[msg.sender] > 0, "Not enough funds to withdraw");
+
+        // Reset amount of funded money for each funder, because owner is going to withdraw all the funds 
+        for (uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
+            address funder = funders[funderIndex];
+            addressToAmountFunded[funder] = 0;
+        }
+
+        // Reset funders array assigning default value 0 
+        funders = new address[](0);
+        
+    }
 }

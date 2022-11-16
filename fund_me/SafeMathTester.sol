@@ -10,7 +10,7 @@ pragma solidity ^0.8.0;
 // No longer used due to bug reveiled
 contract SafeMathTester {
 
-    // this variable is "unchecked", which means that if it gets over its upper bound, it wraps around and restarts from it lower bound
+    // this variable is "unchecked", which means that if it gets over its upper bound, it wraps around and restarts from its lower bound
     uint8 public bigNumber = 255;
     
     // this function would set bigNumber to 0, due to variable size (8 bit)
