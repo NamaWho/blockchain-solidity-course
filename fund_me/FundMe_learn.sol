@@ -64,7 +64,7 @@ contract FundMe {
     using PriceConverter for uint256;
 
     // uint256 public number;
-    uint256 public minimumUSD = 50;
+    uint256 public minimumUSD = 50 * 1e18;
 
     address public owner;
     address[] public funders;

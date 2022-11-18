@@ -4,8 +4,6 @@
 // We can using newer versions if us the "unchecked" keyword
 pragma solidity ^0.8.0;
 
-
-
 // SafeMath library tester
 // No longer used due to bug reveiled
 contract SafeMathTester {
