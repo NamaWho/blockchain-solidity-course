@@ -18,6 +18,7 @@
 
 const ethers = require("ethers");
 const fs = require("fs");
+require("dotenv").config();
 
 async function main() {
   // Compilation command via solcjs [yarn]
@@ -27,15 +28,19 @@ async function main() {
   // In order to connect to our local Ganache blockchain we connect to the RPC endpoint at http://127.0.0.1:7545
   // ethers is going to connect to the RPC endpoint automatically behind the scenes
   // This script is now going to connect with blockchain via the given enpoint url (blockchain node)
-  const provider = new ethers.providers.JsonRpcProvider(
-    "http://127.0.0.1:7545"
-  );
+  const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
 
   // Not a good practice, but useful to learn
-  const wallet = new ethers.Wallet(
-    "ad5d78cd52c03e967dad0be010458f40581d3c0818e110307aeff2908dfdf649",
-    provider
-  );
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+
+  // Best practice to create wallet without using directly private key
+  // wallet is let because it needs to be connected to the provider
+  // const encryptedJson = fs.readFileSync("./.encryptedKey.json", "utf8");
+  // let wallet = new ethers.Wallet.fromEncryptedJsonSync(
+  //   encryptedJson,
+  //   process.env.PRIVATE_KEY_PASSWORD
+  // );
+  // wallet = await wallet.connect(provider);
 
   const abi = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.abi", "utf8");
   const binary = fs.readFileSync(
@@ -76,7 +81,7 @@ async function main() {
   const transactionReceipt = await transactionResponse.wait(1);
   const updatedFavoriteNumber = await contract.retrieve();
 
-  console.log(`Updated Favorite Number: ${updatedFavoriteNumber}`);  
+  console.log(`Updated Favorite Number: ${updatedFavoriteNumber}`);
 }
 
 main()
