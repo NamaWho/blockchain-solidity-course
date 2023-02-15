@@ -1,6 +1,11 @@
-const ethers = require("ethers");
-const fs = require("fs");
-require("dotenv").config();
+// const ethers = require("ethers");
+// const fs = require("fs");
+// require("dotenv").config();
+
+// TypeScript compatibility
+import { ethers } from "ethers";
+import * as fs from "fs-extra";
+import "dotenv/config"
 
 // Used to encrypt PRIVATE_KEY passing via command line the PRIVATE_KEY and PASSWORD to encrypt it with
 // PRIVATE_KEY=0x02334bbbd... PASSWORD=password node encryptKey.js
@@ -11,10 +16,10 @@ require("dotenv").config();
 // Right after encryption clear your command line history with `history -c`
 
 async function main() {
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!);
   const encryptedJsonKey = await wallet.encrypt(
-    process.env.PRIVATE_KEY_PASSWORD,
-    process.env.PRIVATE_KEY
+    process.env.PRIVATE_KEY_PASSWORD!,
+    process.env.PRIVATE_KEY!
   );
   console.log(encryptedJsonKey);
 

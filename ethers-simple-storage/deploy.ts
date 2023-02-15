@@ -16,9 +16,15 @@
 // > Fulfilled
 // > Rejected
 
-const ethers = require("ethers")
-const fs = require("fs")
-require("dotenv").config()
+// const ethers = require("ethers")
+// const fs = require("fs")
+// require("dotenv").config()
+
+// TypeScript compatibility
+import { ethers } from "ethers";
+import * as fs from "fs-extra";
+import "dotenv/config"
+
 
 async function main() {
     // Compilation command via solcjs [yarn]
@@ -31,7 +37,7 @@ async function main() {
     const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL)
 
     // Not a good practice, but useful to learn
-    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
+    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider)
 
     // Best practice to create wallet without using directly private key
     // wallet is let because it needs to be connected to the provider
