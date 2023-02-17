@@ -1,8 +1,15 @@
-require("@nomicfoundation/hardhat-toolbox")
-require("dotenv").config()
-require("@nomiclabs/hardhat-etherscan")
-require("hardhat-gas-reporter")
-require("solidity-coverage")
+// require("@nomicfoundation/hardhat-toolbox")
+// require("dotenv").config()
+// require("@nomiclabs/hardhat-etherscan")
+// require("hardhat-gas-reporter")
+// require("solidity-coverage")
+
+import "@nomicfoundation/hardhat-toolbox"
+import "dotenv/config"
+import "@nomiclabs/hardhat-etherscan"
+import "hardhat-gas-reporter"
+import "solidity-coverage";
+import "@typechain/hardhat"
 
 // Custom Tasks
 require("./tasks/accounts")

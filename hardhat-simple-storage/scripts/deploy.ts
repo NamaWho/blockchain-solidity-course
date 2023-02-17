@@ -1,7 +1,8 @@
 // imports
 // importing ethers from hardhat/ because it is provided with extra tools (e.g. creating a ContractFactory does not need contract
 // and abi to be specified because it searchs for files in its default directories contracts/ and artifacts/)
-const { ethers, run, network } = require("hardhat")
+// const { ethers, run, network } = require("hardhat")
+import { ethers, run, network } from "hardhat";
 require("dotenv").config()
 
 // async main
@@ -33,7 +34,7 @@ async function main() {
     // ----------------------------------
 }
 
-async function verify(contractAddress, args) {
+async function verify(contractAddress: string, args: any[]) {
     console.log("Verifying contract...")
 
     try {
@@ -41,7 +42,7 @@ async function verify(contractAddress, args) {
             address: contractAddress,
             constructorArguments: args,
         })
-    } catch (e) {
+    } catch (e: any) {
         if (e.message.toLowerCase().includes("already verified")) {
             console.log("Already verified.")
         } else console.log(e)
